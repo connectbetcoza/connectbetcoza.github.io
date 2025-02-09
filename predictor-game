@@ -22,6 +22,23 @@
                 }
             }, false);
         };
+        window.onload = function() {
+    window.addEventListener("message", function(event) {
+        // Ensure the message is from Wix (for security)
+        if (event.origin.includes("wixsite.com")) {
+            let userData = event.data;
+            
+            if (userData && userData.email) {
+                document.getElementById("emailInput").value = userData.email;
+                document.getElementById("loginMessage").style.display = "none";
+                document.getElementById("gameContainer").style.display = "block";
+            } else {
+                document.getElementById("loginMessage").style.display = "block";
+                document.getElementById("gameContainer").style.display = "none";
+            }
+        }
+    }, false);
+};
 
         function submitPrediction() {
             let email = document.getElementById("emailInput").value;
