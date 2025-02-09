@@ -101,11 +101,11 @@
         <p>Select your predictions for this week’s matches:</p>
 
         <div class="match">
-            <p>Manchester United vs Liverpool</p>
+            <p>Kaizer Chiefs vs Orlando Pirates</p>
             <select id="prediction1">
-                <option value="1">Man Utd Win</option>
+                <option value="1">Chiefs to Win</option>
                 <option value="X">Draw</option>
-                <option value="2">Liverpool Win</option>
+                <option value="2">Pirates to Win</option>
             </select>
         </div>
 
