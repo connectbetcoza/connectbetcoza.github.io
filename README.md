@@ -4,58 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predictor Game</title>
-    <script type="module">
-        import wixUsers from 'wix-users';
-        import wixData from 'wix-data';
+    <script>
+        window.onload = function() {
+            // Listen for messages from Wix
+            window.addEventListener("message", function(event) {
+                if (event.origin.includes("wixsite.com")) {
+                    let userData = event.data;
+                    
+                    if (userData && userData.email) {
+                        document.getElementById("emailInput").value = userData.email;
+                        document.getElementById("loginMessage").style.display = "none";
+                        document.getElementById("gameContainer").style.display = "block";
+                    } else {
+                        document.getElementById("loginMessage").style.display = "block";
+                        document.getElementById("gameContainer").style.display = "none";
+                    }
+                }
+            }, false);
+        };
 
-        $w.onReady(() => {
-            let user = wixUsers.currentUser;
-    
-            if (!user.loggedIn) {
-                $w("#loginMessage").show();
-                $w("#gameContainer").hide(); // Hide the game if not logged in
-            } else {
-                $w("#loginMessage").hide();
-                $w("#gameContainer").show();
-    
-                // Auto-fill email if user is logged in
-                user.getEmail().then((email) => {
-                    $w("#emailInput").value = email;
-                });
+        function submitPrediction() {
+            let email = document.getElementById("emailInput").value;
+            if (!email) {
+                alert("Please log in via Wix.");
+                return;
             }
-        });
-    
-        $w("#submitButton").onClick(() => {
-            let user = wixUsers.currentUser;
-            let userId = user.id;
-            let email;
-    
-            user.getEmail()
-                .then((userEmail) => {
-                    email = userEmail;
-    
-                    // Save the user's prediction in the database
-                    let predictionData = {
-                        "userId": userId,
-                        "email": email,
-                        "prediction1": $w("#prediction1").value,
-                        "prediction2": $w("#prediction2").value,
-                        "prediction3": $w("#prediction3").value,
-                        "points": 0  // You will update points manually
-                    };
-    
-                    wixData.insert("PredictorGamesPredictions", predictionData)
-                        .then(() => {
-                            console.log("Prediction saved successfully");
-                        })
-                        .catch((err) => {
-                            console.error("Error saving prediction:", err);
-                        });
-                })
-                .catch((error) => {
-                    console.error("Error fetching user email:", error);
-                });
-        });
+
+            let predictionData = {
+                email: email,
+                prediction1: document.getElementById("prediction1").value,
+                prediction2: document.getElementById("prediction2").value,
+                prediction3: document.getElementById("prediction3").value,
+                points: 0
+            };
+
+            console.log("Prediction saved:", predictionData);
+            alert("Your predictions have been submitted!");
+        }
     </script>
     <style>
         body {
@@ -89,23 +74,20 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        button:disabled {
-            background: #aaa;
-        }
     </style>
 </head>
 <body>
-    <div id="loginMessage" style="display: none; color: red;">Please log in to make predictions.</div>
+    <div id="loginMessage" style="color: red;">Please log in via Wix.</div>
     <div class="container" id="gameContainer" style="display: none;">
         <h2>Predict the Results!</h2>
         <p>Select your predictions for this week’s matches:</p>
 
         <div class="match">
-            <p>Chiefs vs Pirates</p>
+            <p>Manchester United vs Liverpool</p>
             <select id="prediction1">
-                <option value="1">Chiefs Win</option>
+                <option value="1">Man Utd Win</option>
                 <option value="X">Draw</option>
-                <option value="2">Pirates Win</option>
+                <option value="2">Liverpool Win</option>
             </select>
         </div>
 
@@ -128,8 +110,7 @@
         </div>
 
         <input type="email" id="emailInput" placeholder="Your Email" readonly>
-        <button id="submitButton">Submit Predictions</button>
-        <p id="result"></p>
+        <button onclick="submitPrediction()">Submit Predictions</button>
     </div>
 </body>
 </html>
